@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 fn main() {
     let input: &[&str] = &[
         "Allegoric Alaskans;Blithering Badgers;win",
@@ -11,45 +13,80 @@ fn main() {
     tally(&input);
 }
 
-struct Team {
-    name: String,
-    mp: i32,
-    w: i32,
-    d: i32,
-    l: i32,
-    p: i32,
-}
-
-impl Team {}
-
-struct Teams {
-    teams: Vec<Team>,
-}
-
-impl Teams {
-    fn getResult() -> String {
-        todo!()
-    }
-}
-
 pub fn tally(match_results: &str) -> String {
-    let strings: Vec<&str> = match_results.split('\n').collect();
-    for s in strings {
+    let mut teams: HashMap<&str, [i32; 4]> = HashMap::new();
+    let v: Vec<&str> = match_results.split('\n').collect();
+    for s in &v {
         let parts: Vec<&str> = s.split(';').collect();
         let t1: &str = parts[0];
         let t2: &str = parts[1];
         let result = parts[2];
         println!("{} : {} - {}", t1, t2, result);
+        match result {
+            "win" => {
+                if teams.contains_key(t1) {
+                    teams[t1][0] += 1;
+                    teams[t1][1] += 1;
+                } else {
+                    teams.insert(t1,[0,0,0,0]);
+                    teams[t1][0] += 1;
+                    teams[t1][1] += 1;
+                }
+                if teams.contains_key(t2) {
+                    teams[t2][0] += 1;
+                    teams[t2][3] += 1;
+                } else {
+                    teams.insert(t1,[0,0,0,0]);
+                    teams[t1][0] += 1;
+                    teams[t1][1] += 1;
+                }
+            }
+            "lose" => {
+                if teams.contains_key(t1) {
+                    teams[t1][0] += 1;
+                    teams[t1][3] += 1;
+                } else {
+                    teams.insert(t1,[0,0,0,0]);
+                    teams[t1][0] += 1;
+                    teams[t1][3] += 1;
+                }
+                if teams.contains_key(t2) {
+                    teams[t2][0] += 1;
+                    teams[t2][1] += 1;
+                } else {
+                    teams.insert(t1,[0,0,0,0]);
+                    teams[t1][0] += 1;
+                    teams[t1][1] += 1;
+                }
+            }
+            "draw" => {
+                if teams.contains_key(t1) {
+                    teams[t1][0] += 1;
+                    teams[t1][2] += 1;
+                } else {
+                    teams.insert(t1,[0,0,0,0]);
+                    teams[t1][0] += 1;
+                    teams[t1][2] += 1;
+                }
+                if teams.contains_key(t2) {
+                    teams[t2][0] += 1;
+                    teams[t2][2] += 1;
+                } else {
+                    teams.insert(t1,[0,0,0,0]);
+                    teams[t1][0] += 1;
+                    teams[t1][2] += 1;
+                }
+            }
+            _ => {}
+        }
     }
     let table = String::from("Team                           | MP |  W |  D |  L |  P");
 
     return table;
 }
 
-fn fetchResult(result: &str) {}
-
 #[test]
-fn a_win_is_three_points_a_loss_is_zero_points() {
+fn typical_input() {
     let input: &[&str] = &[
         "Allegoric Alaskans;Blithering Badgers;win",
         "Devastating Donkeys;Courageous Californians;draw",
@@ -62,8 +99,10 @@ fn a_win_is_three_points_a_loss_is_zero_points() {
     let output = tally(&input);
     let expected = [
         "Team                           | MP |  W |  D |  L |  P",
-        "Allegoric Alaskans             |  1 |  1 |  0 |  0 |  3",
-        "Blithering Badgers             |  1 |  0 |  0 |  1 |  0",
+        "Devastating Donkeys            |  3 |  2 |  1 |  0 |  7",
+        "Allegoric Alaskans             |  3 |  2 |  0 |  1 |  6",
+        "Blithering Badgers             |  3 |  1 |  0 |  2 |  3",
+        "Courageous Californians        |  3 |  0 |  1 |  2 |  1",
     ]
         .join("\n");
     assert_eq!(output, expected);
