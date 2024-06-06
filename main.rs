@@ -14,68 +14,28 @@ fn main() {
 }
 
 pub fn tally(match_results: &str) -> String {
-    let mut teams: HashMap<&str, [i32; 4]> = HashMap::new();
+    let mut teams: HashMap<&str, [i32; 3]> = HashMap::new();
     let v: Vec<&str> = match_results.split('\n').collect();
     for s in &v {
         let parts: Vec<&str> = s.split(';').collect();
-        let t1: &str = parts[0];
-        let t2: &str = parts[1];
-        let result = parts[2];
-        println!("{} : {} - {}", t1, t2, result);
-        match result {
+        match parts[2] {
             "win" => {
-                if teams.contains_key(t1) {
-                    teams[t1][0] += 1;
-                    teams[t1][1] += 1;
-                } else {
-                    teams.insert(t1,[0,0,0,0]);
-                    teams[t1][0] += 1;
-                    teams[t1][1] += 1;
-                }
-                if teams.contains_key(t2) {
-                    teams[t2][0] += 1;
-                    teams[t2][3] += 1;
-                } else {
-                    teams.insert(t1,[0,0,0,0]);
-                    teams[t1][0] += 1;
-                    teams[t1][1] += 1;
-                }
+                let mut ar = teams.entry(parts[0]).or_insert([0, 0, 0]);
+                ar[0] += 1;
+                ar = teams.entry(parts[1]).or_insert([0, 0, 0]);
+                ar[2] += 1;
             }
             "lose" => {
-                if teams.contains_key(t1) {
-                    teams[t1][0] += 1;
-                    teams[t1][3] += 1;
-                } else {
-                    teams.insert(t1,[0,0,0,0]);
-                    teams[t1][0] += 1;
-                    teams[t1][3] += 1;
-                }
-                if teams.contains_key(t2) {
-                    teams[t2][0] += 1;
-                    teams[t2][1] += 1;
-                } else {
-                    teams.insert(t1,[0,0,0,0]);
-                    teams[t1][0] += 1;
-                    teams[t1][1] += 1;
-                }
+                let mut ar = teams.entry(parts[0]).or_insert([0, 0, 0]);
+                ar[2] += 1;
+                ar = teams.entry(parts[1]).or_insert([0, 0, 0]);
+                ar[0] += 1;
             }
             "draw" => {
-                if teams.contains_key(t1) {
-                    teams[t1][0] += 1;
-                    teams[t1][2] += 1;
-                } else {
-                    teams.insert(t1,[0,0,0,0]);
-                    teams[t1][0] += 1;
-                    teams[t1][2] += 1;
-                }
-                if teams.contains_key(t2) {
-                    teams[t2][0] += 1;
-                    teams[t2][2] += 1;
-                } else {
-                    teams.insert(t1,[0,0,0,0]);
-                    teams[t1][0] += 1;
-                    teams[t1][2] += 1;
-                }
+                let mut ar = teams.entry(parts[0]).or_insert([0, 0, 0]);
+                ar[1] += 1;
+                ar = teams.entry(parts[1]).or_insert([0, 0, 0]);
+                ar[1] += 1;
             }
             _ => {}
         }
