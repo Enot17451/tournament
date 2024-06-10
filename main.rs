@@ -1,4 +1,101 @@
-use std::collections::HashMap;
+struct Team<'a> {
+    name: &'a str,
+    games: i32,
+    win: i32,
+    lose: i32,
+    draw: i32,
+    points: i32,
+}
+
+impl Team {
+    fn new(_name: &str) -> Self {
+        Self {
+            name: _name,
+            games: 0,
+            win: 0,
+            lose: 0,
+            draw: 0,
+            points: 0,
+        }
+    }
+
+    fn win(&mut self) {
+        self.win += 1;
+    }
+
+    fn draw(&mut self) {
+        self.draw += 1;
+    }
+
+    fn lose(&mut self) {
+        self.lose += 1;
+    }
+
+    fn getAll(&mut self) {
+        self.games = self.win + self.draw + self.lose;
+        self.points = self.win * 3 + self.draw;
+    }
+}
+
+struct Table<'a> {
+    teams: Vec<Team<'a>>,
+}
+
+impl Table {
+    fn new() -> Self {
+        return Self {
+            teams: Vec::new()
+        };
+    }
+
+    fn findInVec(&self, name: &str) -> Option<usize> {
+        for i in 0..self.teams.len() {
+            if self.teams[i].name == name {
+                return Some(i);
+            }
+        }
+        return None;
+    }
+
+    fn set(&mut self, v: &Vec<&str>) {
+        let team: &mut Team;
+        match self.findInVec(v[0]) {
+            Some(index) => {
+                team = &mut self.teams[index];
+            }
+            None => {
+                self.teams.push(Team::new(v[0]));
+                team = &mut self.teams[self.teams.len() - 1];
+            }
+        }
+        match v[2] {
+            "win" => team.win(),
+            "draw" => team.draw(),
+            "loss" => team.lose(),
+            _ => {}
+        }
+        match self.findInVec(v[1]) {
+            Some(index) => {
+                team = &mut self.teams[index];
+            }
+            None => {
+                self.teams.push(Team::new(v[0]));
+                team = &mut self.teams[self.teams.len() - 1];
+            }
+        }
+        match v[2] {
+            "win" => team.lose(),
+            "draw" => team.draw(),
+            "loss" => team.win(),
+            _ => {}
+        }
+    }
+
+    fn print(&self) -> String {
+        let table = String::from("Team                           | MP |  W |  D |  L |  P");
+        return "".to_string();
+    }
+}
 
 fn main() {
     let input: &[&str] = &[
@@ -14,35 +111,13 @@ fn main() {
 }
 
 pub fn tally(match_results: &str) -> String {
-    let mut teams: HashMap<&str, [i32; 3]> = HashMap::new();
+    let mut table = Table::new();
     let v: Vec<&str> = match_results.split('\n').collect();
     for s in &v {
         let parts: Vec<&str> = s.split(';').collect();
-        match parts[2] {
-            "win" => {
-                let mut ar = teams.entry(parts[0]).or_insert([0, 0, 0]);
-                ar[0] += 1;
-                ar = teams.entry(parts[1]).or_insert([0, 0, 0]);
-                ar[2] += 1;
-            }
-            "lose" => {
-                let mut ar = teams.entry(parts[0]).or_insert([0, 0, 0]);
-                ar[2] += 1;
-                ar = teams.entry(parts[1]).or_insert([0, 0, 0]);
-                ar[0] += 1;
-            }
-            "draw" => {
-                let mut ar = teams.entry(parts[0]).or_insert([0, 0, 0]);
-                ar[1] += 1;
-                ar = teams.entry(parts[1]).or_insert([0, 0, 0]);
-                ar[1] += 1;
-            }
-            _ => {}
-        }
+        table.set(&parts);
     }
-    let table = String::from("Team                           | MP |  W |  D |  L |  P");
-
-    return table;
+    return table.print();
 }
 
 #[test]
