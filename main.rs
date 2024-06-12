@@ -21,18 +21,6 @@ impl<'a> Team<'a> {
         }
     }
 
-    fn win(&mut self) {
-        self.win += 1;
-    }
-
-    fn draw(&mut self) {
-        self.draw += 1;
-    }
-
-    fn lose(&mut self) {
-        self.lose += 1;
-    }
-
     fn getAll(&mut self) {
         self.games = self.win + self.draw + self.lose;
         self.points = self.win * 3 + self.draw;
@@ -76,7 +64,8 @@ impl<'a> Table<'a> {
                 self.draw(v[1]);
             },
             "loss" => {
-                
+                self.lose(v[0]);
+                self.win(v[1]);
             },
             _ => {}
         }
