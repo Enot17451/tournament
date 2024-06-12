@@ -50,15 +50,15 @@ impl<'a> Table<'a> {
         }
     }
 
-    fn win(){
+    fn win(&self,team:&str){
         
     }
 
-    fn lose(){
+    fn lose(&self,team:&str){
         
     }
 
-    fn draw(){
+    fn draw(&self,team:&str){
         
     }
 
