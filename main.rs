@@ -1,3 +1,5 @@
+#![allow(warnings)]
+
 struct Team<'a> {
     name: &'a str,
     games: i32,
@@ -48,30 +50,42 @@ impl<'a> Table<'a> {
         }
     }
 
-    fn first(&mut self, s: &'a str) {
-        let team: &mut Team;
-        let a = splitString(s, ';');
-        print!("{:?}", a)
-        // match v[2] {
-        //     "win" => team.win(),
-        //     "draw" => team.draw(),
-        //     "loss" => team.lose(),
-        //     _ => {}
-        // }
+    fn win(){
+        
     }
 
-    fn second(&mut self, s: &'a str) {}
+    fn lose(){
+        
+    }
+
+    fn draw(){
+        
+    }
+
+    fn set(&mut self, s: &'a str) {
+        let team: &mut Team;
+        let v:Vec<&str> = s.split(';').collect();
+        println!("{:?}", v);
+        match v[2] {
+            "win" => {
+                self.win(v[0]);
+                self.lose(v[1]);
+            },
+            "draw" => {
+                self.draw(v[0]);
+                self.draw(v[1]);
+            },
+            "loss" => {
+                
+            },
+            _ => {}
+        }
+    }
 
     fn print(&self) -> String {
         let table = String::from("Team                           | MP |  W |  D |  L |  P");
-        return "".to_string();
+        return "end".to_string();
     }
-}
-
-fn splitString(s: &str, ch: char) -> Vec<&str> {
-    let v: Vec<&str> = Vec::new();
-    
-    return v;
 }
 
 fn main() {
@@ -91,8 +105,7 @@ pub fn tally(match_results: &str) -> String {
     let mut table = Table::new();
     let v: Vec<&str> = match_results.split('\n').collect();
     for s in &v {
-        table.first(s);
-        table.second(s);
+        table.set(s);
     }
     return table.print();
 }
