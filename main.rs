@@ -1,22 +1,22 @@
 #![allow(warnings)]
 
-use std::collections::HashMap;
-
-struct Team {
+struct Team<'a> {
+    name:&'a str,
     games: i32,
     win: i32,
-    lose: i32,
     draw: i32,
+    lose: i32,
     points: i32,
 }
 
-impl Team {
-    fn new() -> Self {
+impl<'a> Team<'a> {
+    fn new(_name:&'a str) -> Self {
         Self {
+            name:_name,
             games: 0,
             win: 0,
-            lose: 0,
             draw: 0,
+            lose: 0,
             points: 0,
         }
     }
@@ -27,9 +27,13 @@ impl Team {
     }
 }
 
-fn print() -> String {
-    let table = String::from("Team                           | MP |  W |  D |  L |  P");
-    return "end".to_string();
+fn addTeam(name:&str,result: &str,table:&mut Vec<Team>){
+
+}
+
+fn print(table:&Vec<Team>) -> String {
+    let out = String::from("Team                           | MP |  W |  D |  L |  P");
+    return out;
 }
 
 fn main() {
@@ -46,37 +50,12 @@ fn main() {
 }
 
 pub fn tally(match_results: &str) -> String {
-    let mut table: HashMap<&str, Team> = HashMap::new();
-    let results: Vec<&str> = match_results.split('\n').collect();
-    for result in results {
-        for res in result.split(";").collect() {
-            let o: Option<&mut Team> = table.get_mut(res[0]);
-            match o {
-                Some(t) => {
-                    match res[2] {
-                        "win" => t.win += 1,
-                        "draw" => t.draw += 1,
-                        "loss" => t.lose += 1,
-                        _ => {}
-                    }
-                }
-                None => {}
-            }
-            let o: Option<&mut Team> = table.get_mut(res[1]);
-            match o {
-                Some(t) => {
-                    match res[2] {
-                        "win" => t.lose += 1,
-                        "draw" => t.draw += 1,
-                        "loss" => t.win += 1,
-                        _ => {}
-                    }
-                }
-                None => {}
-            }
-        }
+    let matchStrings: Vec<&str> = match_results.split('\n').collect();
+    let mut table = Vec::with_capacity(matchStrings.len()/2);
+    for ms in matchStrings {
+        let string: Vec<&str> = ms.split(";").collect();
     }
-    return print();
+    return print(&table);
 }
 
 #[test]
