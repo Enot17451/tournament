@@ -1,7 +1,8 @@
 #![allow(warnings)]
 
-struct Team<'a> {
-    name: &'a str,
+use std::collections::HashMap;
+
+struct Team {
     games: i32,
     win: i32,
     lose: i32,
@@ -9,10 +10,9 @@ struct Team<'a> {
     points: i32,
 }
 
-impl<'a> Team<'a> {
-    fn new(_name: &'a str) -> Self {
+impl Team {
+    fn new() -> Self {
         Self {
-            name: _name,
             games: 0,
             win: 0,
             lose: 0,
@@ -27,54 +27,9 @@ impl<'a> Team<'a> {
     }
 }
 
-struct Table<'a> {
-    teams: Vec<Team<'a>>,
-}
-
-impl<'a> Table<'a> {
-    fn new() -> Self {
-        Self {
-            teams: Vec::new()
-        }
-    }
-
-    fn win(&self,team:&str){
-        
-    }
-
-    fn lose(&self,team:&str){
-        
-    }
-
-    fn draw(&self,team:&str){
-        
-    }
-
-    fn set(&mut self, s: &'a str) {
-        let team: &mut Team;
-        let v:Vec<&str> = s.split(';').collect();
-        println!("{:?}", v);
-        match v[2] {
-            "win" => {
-                self.win(v[0]);
-                self.lose(v[1]);
-            },
-            "draw" => {
-                self.draw(v[0]);
-                self.draw(v[1]);
-            },
-            "loss" => {
-                self.lose(v[0]);
-                self.win(v[1]);
-            },
-            _ => {}
-        }
-    }
-
-    fn print(&self) -> String {
-        let table = String::from("Team                           | MP |  W |  D |  L |  P");
-        return "end".to_string();
-    }
+fn print() -> String {
+    let table = String::from("Team                           | MP |  W |  D |  L |  P");
+    return "end".to_string();
 }
 
 fn main() {
@@ -91,12 +46,37 @@ fn main() {
 }
 
 pub fn tally(match_results: &str) -> String {
-    let mut table = Table::new();
-    let v: Vec<&str> = match_results.split('\n').collect();
-    for s in &v {
-        table.set(s);
+    let mut table: HashMap<&str, Team> = HashMap::new();
+    let results: Vec<&str> = match_results.split('\n').collect();
+    for result in results {
+        for res in result.split(";").collect() {
+            let o: Option<&mut Team> = table.get_mut(res[0]);
+            match o {
+                Some(t) => {
+                    match res[2] {
+                        "win" => t.win += 1,
+                        "draw" => t.draw += 1,
+                        "loss" => t.lose += 1,
+                        _ => {}
+                    }
+                }
+                None => {}
+            }
+            let o: Option<&mut Team> = table.get_mut(res[1]);
+            match o {
+                Some(t) => {
+                    match res[2] {
+                        "win" => t.lose += 1,
+                        "draw" => t.draw += 1,
+                        "loss" => t.win += 1,
+                        _ => {}
+                    }
+                }
+                None => {}
+            }
+        }
     }
-    return table.print();
+    return print();
 }
 
 #[test]
