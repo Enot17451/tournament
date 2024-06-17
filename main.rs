@@ -1,22 +1,22 @@
 #![allow(warnings)]
 
 struct Team<'a> {
-    name:&'a str,
+    name: &'a str,
     games: i32,
     win: i32,
-    draw: i32,
     lose: i32,
+    draw: i32,
     points: i32,
 }
 
 impl<'a> Team<'a> {
-    fn new(_name:&'a str) -> Self {
+    fn new(teamName: &'a str) -> Self {
         Self {
-            name:_name,
+            name: teamName,
             games: 0,
             win: 0,
-            draw: 0,
             lose: 0,
+            draw: 0,
             points: 0,
         }
     }
@@ -27,13 +27,50 @@ impl<'a> Team<'a> {
     }
 }
 
-fn addTeam(name:&str,result: &str,table:&mut Vec<Team>){
-
+struct Table<'a> {
+    teams: Vec<Team<'a>>,
 }
 
-fn print(table:&Vec<Team>) -> String {
-    let out = String::from("Team                           | MP |  W |  D |  L |  P");
-    return out;
+impl<'a> Table<'a> {
+    fn new() -> Self {
+        Self {
+            teams: Vec::new()
+        }
+    }
+
+    pub fn add(&mut self, teamName: &'a str, result: &str) {
+        let mut existTeam: Option<&mut Team> = None;
+        for team in &mut self.teams {
+            if team.name == teamName {
+                existTeam = Some(team);
+                break;
+            }
+        }
+        match existTeam {
+            Some(t) => {
+                match result {
+                    "win" => t.win += 1,
+                    "lose" => t.lose += 1,
+                    _ => t.draw += 1
+                }
+            }
+            None => {
+                self.teams.push(Team::new(teamName));
+                let t = self.teams.last_mut().unwrap();
+                match result {
+                    "win" => t.win += 1,
+                    "lose" => t.lose += 1,
+                    _ => t.draw += 1
+                }
+            }
+        }
+    }
+
+
+    pub fn print(&self) -> String {
+        let out = String::from("Team                           | MP |  W |  D |  L |  P");
+        return out;
+    }
 }
 
 fn main() {
@@ -49,13 +86,23 @@ fn main() {
     tally(&input);
 }
 
-pub fn tally(match_results: &str) -> String {
-    let matchStrings: Vec<&str> = match_results.split('\n').collect();
-    let mut table = Vec::with_capacity(matchStrings.len()/2);
-    for ms in matchStrings {
-        let string: Vec<&str> = ms.split(";").collect();
+fn resultForSecondTeam(result: &str) -> &str {
+    match result {
+        "win" => "loss",
+        "loss" => "win",
+        _ => "draw"
     }
-    return print(&table);
+}
+
+pub fn tally(match_results: &str) -> String {
+    let mut table = Table::new();
+    let results: Vec<&str> = match_results.split('\n').collect();
+    for result in results {
+        let line: Vec<&str> = result.split(';').collect();
+        table.add(line[0], line[2]);
+        table.add(line[0], resultForSecondTeam(line[2]));
+    }
+    return table.print();
 }
 
 #[test]
