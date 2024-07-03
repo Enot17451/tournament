@@ -9,27 +9,47 @@ fn main() {
     assert_eq!(list.pop(), None, "No element should be contained in list");
 }
 
+struct Node<T>{
+    data:T,
+    next:Option<Box<Node<T>>>
+}
+
+impl<T> Node<T> {
+    
+    fn new(d:T)->Self{
+        Self{
+            data:d,
+            next:None
+        }
+    }
+}
+
 pub struct SimpleLinkedList<T> {
-    // Delete this field
-    // dummy is needed to avoid unused parameter error during compilation
-    dummy: ::std::marker::PhantomData<T>,
+    head:Option<Box<Node<T>>>,
+    last:Option<Box<Node<T>>>,
+    len:usize
 }
 
 impl<T> SimpleLinkedList<T> {
     pub fn new() -> Self {
-        todo!()
+        Self{
+            head:None,
+            last:None,
+            len:0
+        }
     }
 
     pub fn is_empty(&self) -> bool {
-        todo!()
+        self.len == 0
     }
 
     pub fn len(&self) -> usize {
-        todo!()
+        self.len
     }
 
     pub fn push(&mut self, _element: T) {
-        todo!()
+        self.len+=1;
+
     }
 
     pub fn pop(&mut self) -> Option<T> {
@@ -175,3 +195,4 @@ mod tests{
     
 
 }
+
