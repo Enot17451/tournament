@@ -1,5 +1,4 @@
 
-
 fn main() {
     let mut list: SimpleLinkedList<u32> = SimpleLinkedList::new();
     list.push(1);
@@ -10,46 +9,56 @@ fn main() {
 }
 
 struct Node<T>{
-    data:T,
+    data:Option<T>,
     next:Option<Box<Node<T>>>
 }
 
 impl<T> Node<T> {
     
-    fn new(d:T)->Self{
+    fn new()->Self{
         Self{
-            data:d,
+            data:None,
             next:None
         }
+    }
+
+    fn set(& mut self,n:T){
+        self.data = Some(n);
     }
 }
 
 pub struct SimpleLinkedList<T> {
-    head:Option<Box<Node<T>>>,
-    last:Option<Box<Node<T>>>,
-    len:usize
+    first:Option<Box<Node<T>>>,
+    size:usize
 }
 
 impl<T> SimpleLinkedList<T> {
     pub fn new() -> Self {
         Self{
-            head:None,
-            last:None,
-            len:0
+            first:None,
+            size:0
         }
     }
 
     pub fn is_empty(&self) -> bool {
-        self.len == 0
+        self.size == 0
     }
 
     pub fn len(&self) -> usize {
-        self.len
+        self.size
     }
 
-    pub fn push(&mut self, _element: T) {
-        self.len+=1;
-
+    pub fn push(&mut self, element: T) {
+        match &self.first {
+            Some(n)=>{
+                
+            }
+            None=>{
+                self.first = Some(Box::new(Node::new())); 
+                self.first.as_mut().unwrap().set(element);
+            }
+        }
+        self.size+=1;
     }
 
     pub fn pop(&mut self) -> Option<T> {
@@ -195,4 +204,3 @@ mod tests{
     
 
 }
-
