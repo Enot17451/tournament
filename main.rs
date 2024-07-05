@@ -21,10 +21,6 @@ impl<T> Node<T> {
             next:None
         }
     }
-
-    fn set(& mut self,n:T){
-        self.data = Some(n);
-    }
 }
 
 pub struct SimpleLinkedList<T> {
@@ -49,14 +45,16 @@ impl<T> SimpleLinkedList<T> {
     }
 
     pub fn push(&mut self, element: T) {
-        match &self.first {
-            Some(n)=>{
+        if self.first.is_none() {
+            self.first = Some(Box::new(Node::new(element)));
+        }else {
+            let mut t:&mut Option<Box<Node<T>>>;
+            t = &mut self.first;
+            loop {
                 
+                break;
             }
-            None=>{
-                self.first = Some(Box::new(Node::new())); 
-                self.first.as_mut().unwrap().set(element);
-            }
+            *t = Some(Box::new(Node::new(element)));
         }
         self.size+=1;
     }
