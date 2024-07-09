@@ -1,4 +1,3 @@
-
 fn main() {
     let mut list: SimpleLinkedList<u32> = SimpleLinkedList::new();
     list.push(1);
@@ -9,15 +8,15 @@ fn main() {
 }
 
 struct Node<T>{
-    data:Option<T>,
+    data:T,
     next:Option<Box<Node<T>>>
 }
 
 impl<T> Node<T> {
     
-    fn new()->Self{
+    fn new(t:T)->Self{
         Self{
-            data:None,
+            data:t,
             next:None
         }
     }
@@ -45,22 +44,23 @@ impl<T> SimpleLinkedList<T> {
     }
 
     pub fn push(&mut self, element: T) {
-        if self.first.is_none() {
-            self.first = Some(Box::new(Node::new(element)));
-        }else {
-            let mut t:&mut Option<Box<Node<T>>>;
-            t = &mut self.first;
-            loop {
-                
-                break;
+        match &self.first {
+            None=>{
+                self.first = Some(Box::new(Node::new(element)));
             }
-            *t = Some(Box::new(Node::new(element)));
+            Some(n)=>{
+                loop {
+                    
+                }
+                n.next = Some(Box::new(Node::new(element)));
+            }
         }
         self.size+=1;
     }
 
     pub fn pop(&mut self) -> Option<T> {
-        todo!()
+        let t = self.first;
+
     }
 
     pub fn peek(&self) -> Option<&T> {
@@ -69,6 +69,18 @@ impl<T> SimpleLinkedList<T> {
 
     #[must_use]
     pub fn rev(self) -> SimpleLinkedList<T> {
+        todo!()
+    }
+}
+
+impl<T> FromIterator<T> for SimpleLinkedList<T> {
+    fn from_iter<I: IntoIterator<Item = T>>(_iter: I) -> Self {
+        todo!()
+    }
+}
+
+impl<T> From<SimpleLinkedList<T>> for Vec<T> {
+    fn from(mut _linked_list: SimpleLinkedList<T>) -> Vec<T> {
         todo!()
     }
 }
